@@ -7,11 +7,9 @@ Item {
     property var note_index
     Rectangle {
         id: note_title
-        anchors {
-            left: parent.left
-            top: parent.top
-            right: parent.right
-        }
+        x: 0
+        y: 0
+        width: parent.width
         height: 80
         border {
             width: 0.5
@@ -28,18 +26,15 @@ Item {
                 pixelSize: Math.min(parent.height, parent.width) * 0.8
             }
             color: "blue"
+            onTextChanged: note_controller.saveEditingNote(text, note_content.text)
         }
     }
 
-    TextInput {
+    TextEdit {
         id: note_content
-        anchors {
-            left: parent.left
-            top: note_title.bottom
-            right: parent.right
-            bottom: parent.bottom
-            leftMargin: 5
-        }
+        anchors.fill: parent
+        anchors.leftMargin: 5
+        anchors.topMargin: 85
 
         text: note_list.data(note_index, Qt.DisplayRole)
         font {
@@ -47,8 +42,13 @@ Item {
         }
         clip: true
         wrapMode: Text.WordWrap
+        inputMethodHints: Qt.ImhMultiLine
+        onTextChanged: {
+            note_controller.saveEditingNote(note_title_text.text, text)
+        }
+
+        // activeFocusOnPress: false
+        // cursorVisible: true
 
     }
-
-
 }

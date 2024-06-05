@@ -33,13 +33,13 @@ Item {
                 font {
                     pixelSize: 50
                 }
-                opacity: enabled ? 1 : 0.3
+                // opacity: enabled ? 1 : 0.3
                 color: "blue"
             }
             background: Rectangle {
                 anchors.fill: parent
                 opacity: enabled ? 1.0 : 0.3
-                color: a_note.down ? "lightgreen" : "white"
+                // color: a_note.down ? "lightgreen" : "white"
                 border.width: 1
                 radius: 2
             }

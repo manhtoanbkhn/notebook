@@ -14,9 +14,15 @@ qt_add_executable(appmy_note
   controller/note.h  controller/note.cpp
 )
 
+if(ANDROID)
+  set_property(TARGET appmy_note APPEND PROPERTY
+      QT_ANDROID_PACKAGE_SOURCE_DIR ${CMAKE_CURRENT_SOURCE_DIR}/android
+  )
+endif()
+
 qt_add_qml_module(appmy_note
   URI my_note
-  VERSION 1.0
+  VERSION 1.0.0
   QML_FILES Main.qml qml/Note.qml qml/MainWindow.qml
 )
 

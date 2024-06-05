@@ -17,13 +17,22 @@ Note::Note(QObject *parent)
   qDebug() << "current dir: " << QDir::current().absolutePath();
 }
 
+Note::~Note()
+{
+  if (editing_note_index_ != -1) {
+    finishEditingNote(*note_list_->getNote(editing_note_index_));
+  }
+}
+
 void Note::load(const QString& notes_dir)
 {
   QDir dir(notes_dir);
   qDebug() << "notes_dir: " << dir.absolutePath();
   auto entries = dir.entryList(QStringList("note_*.json"), QDir::Files, QDir::Time);
+  qDebug() << "entries=" << entries;
   for (const auto& entry : entries)
   {
+    qDebug() << "entry = " << entry;
     QFile file(entry);
     if (!file.open(QIODevice::ReadOnly))
     {
@@ -32,29 +41,28 @@ void Note::load(const QString& notes_dir)
     }
     note_file_path_.push_back(entry);
     auto content = file.readAll();
+    qDebug() << "content=" << content;
     file.close();
     QJsonDocument doc = QJsonDocument::fromJson(content);
     QJsonObject object = doc.object();
 
     Model::Note note{object["title"].toString(), object["content"].toString()};
 
+    qDebug() << "note.title=" << note.title << ", note.content=" << note.content;
+
     note_list_->appendData(note);
   }
 }
 
-bool Note::save(const QString& note_file_path, const Model::Note* note)
+bool Note::save(const Model::Note* note)
 {
-  QString temp_file = "temp_note.json";
-  QFile file(temp_file);
-  if (!file.open(QIODevice::WriteOnly))
-  {
-    qDebug() << tr("Cannot open file for saving note %1").arg(note->title);
+  QString file_path = note_file_path_.at(editing_note_index_);
+  QFile file(file_path);
+  if (!file.open(QIODevice::WriteOnly)) {
+    qWarning() << "cannot open for writing: " << file_path;
     return false;
   }
-  file.write(QJsonDocument(note->toJson()).toJson());
-  file.close();
-  file.rename(note_file_path);
-  return true;
+  return file.write(QJsonDocument(note->toJson()).toJson()) != -1;
 }
 
 void Note::createNewNote()
@@ -79,16 +87,50 @@ void Note::setEditingNote(int index)
 void Note::finishEditingNote(const Model::Note& note)
 {
   qDebug() << "finish editing note: " << note.title << ", " << note.content;
-  if (editing_note_index_ > -1) {
-    if (!save(note_file_path_[editing_note_index_], &note)) {
-      return;
-    }
-    QModelIndex index = note_list_->index(editing_note_index_, 0);
+  if (editing_note_index_ == -1) return;
 
-    note_list_->setHeaderData(editing_note_index_, Qt::Vertical, note.title, Qt::EditRole);
-    note_list_->setData(index, note.content, Qt::EditRole);
-    editing_note_index_ = -1;
+  Model::Note* editing_note = note_list_->getNote(editing_note_index_);
+
+  if (note.content != editing_note->content ||
+    note.title != editing_note->title) {
+    bool saved = save(&note);
+    if (!saved) {
+      qWarning() << tr("Finish editing note without save last state.");
+    }
+    else {
+      QModelIndex index = note_list_->index(editing_note_index_, 0);
+      note_list_->setHeaderData(editing_note_index_, Qt::Vertical, note.title, Qt::EditRole);
+      note_list_->setData(index, note.content, Qt::EditRole);
+    }
   }
+  editing_note_index_ = -1;
+}
+
+void Note::saveEditingNote(const QString& header, const QString& content)
+{
+  qDebug() << "saveEditingNote: " << header << ", " << content;
+  if (editing_note_index_ == -1) {
+    qDebug() << "editing note index = -1";
+    return;
+  }
+
+  Model::Note* editing_note = note_list_->getNote(editing_note_index_);
+  if (editing_note->title == header && editing_note->content == content) {
+    qDebug() << "is same";
+    return;
+  }
+
+  Model::Note note {header, content};
+
+  if (!save(&note)) {
+    qWarning() << "Failed to save editing note";
+    return;
+  }
+  qDebug() << "saved success";
+  QModelIndex index = note_list_->index(editing_note_index_, 0);
+
+  note_list_->setHeaderData(editing_note_index_, Qt::Vertical, note.title, Qt::EditRole);
+  note_list_->setData(index, note.content, Qt::EditRole);
 }
 
 void Note::remove(int index)

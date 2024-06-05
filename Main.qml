@@ -6,6 +6,7 @@ Window {
     title: qsTr("My Note")
 
     onClosing: (close) => {
+           console.log("on Closing " + loader.source.toString())
            if (loader.source.toString() === "qml/MainWindow.qml") {
                return
            }

@@ -5,6 +5,7 @@
 
 #include "model/note.h"
 
+
 namespace Controller {
 
 constexpr char* kNotesDir = ".";
@@ -14,14 +15,16 @@ class Note : public QObject
   Q_OBJECT
 public:
   explicit Note(QObject *parent = nullptr);
+  ~Note();
 
   void load(const QString& notes_dir);
-  bool save(const QString& note_file_path, const Model::Note* note);
+  bool save(const Model::Note* note);
 
   Q_INVOKABLE void createNewNote();
   Q_INVOKABLE void remove(int index);
   Q_INVOKABLE void setEditingNote(int index);
   Q_INVOKABLE void finishEditingNote(const Model::Note& note);
+  Q_INVOKABLE void saveEditingNote(const QString& header, const QString& content);
 
   Model::NoteList* note_list() const
   {
