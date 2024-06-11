@@ -31,7 +31,7 @@ Item {
                 id: note_header
                 text: a_note.text
                 font {
-                    pixelSize: 50
+                    pixelSize: 40
                 }
                 // opacity: enabled ? 1 : 0.3
                 color: "blue"
@@ -39,8 +39,7 @@ Item {
             background: Rectangle {
                 anchors.fill: parent
                 opacity: enabled ? 1.0 : 0.3
-                // color: a_note.down ? "lightgreen" : "white"
-                border.width: 1
+                color: index % 2 ? "#f7f7e9" : "#f1fbf7"
                 radius: 2
             }
             onClicked: note_controller.setEditingNote(index)

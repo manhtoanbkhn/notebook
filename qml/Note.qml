@@ -23,7 +23,7 @@ Item {
             verticalAlignment: Text.AlignVCenter
             horizontalAlignment: Text.AlignHCenter
             font {
-                pixelSize: Math.min(parent.height, parent.width) * 0.8
+                pixelSize: 40
             }
             color: "blue"
             onTextChanged: note_controller.saveEditingNote(text, note_content.text)
