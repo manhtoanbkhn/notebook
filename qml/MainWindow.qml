@@ -51,6 +51,7 @@ Item {
                     text: TimeRole
                     color: "blue"
                     opacity: 0.4
+                    font.pixelSize: 20
                 }
             }
             onClicked: note_controller.setEditingNote(index)
