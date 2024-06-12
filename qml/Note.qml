@@ -1,5 +1,6 @@
 import QtQuick 2.15
 import QtQuick.Controls
+import model.notelist 1.0
 
 Item {
     property string content: note_content.text
@@ -19,7 +20,7 @@ Item {
         TextInput {
             id: note_title_text
             anchors.fill: parent
-            text: note_list.headerData(note_index.row, Qt.Vertical)
+            text: note_list.headerData(note_index.row, Qt.Vertical, ModelNoteList.TitleRole)
             verticalAlignment: Text.AlignVCenter
             horizontalAlignment: Text.AlignHCenter
             font {
@@ -36,7 +37,7 @@ Item {
         anchors.leftMargin: 5
         anchors.topMargin: 85
 
-        text: note_list.data(note_index, Qt.DisplayRole)
+        text: note_list.data(note_index, ModelNoteList.ContentRole)
         font {
             pixelSize: 30
         }

@@ -5,7 +5,6 @@
 
 #include "model/note.h"
 
-
 namespace Controller {
 
 constexpr char* kNotesDir = ".";
@@ -25,6 +24,13 @@ public:
   Q_INVOKABLE void setEditingNote(int index);
   Q_INVOKABLE void finishEditingNote(const Model::Note& note);
   Q_INVOKABLE void saveEditingNote(const QString& header, const QString& content);
+
+  Q_INVOKABLE static inline QString getTimeNowStr(bool use_second = false)
+  {
+    if (use_second)
+      return QDateTime::currentDateTime().toString("dd.MM.yyyy hh:mm:ss");
+    return QDateTime::currentDateTime().toString("dd.MM.yyyy hh:mm");
+  }
 
   Model::NoteList* note_list() const
   {

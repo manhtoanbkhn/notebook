@@ -9,6 +9,8 @@ int main(int argc, char *argv[])
 {
   QGuiApplication app(argc, argv);
 
+  qmlRegisterType<Model::NoteList>("model.notelist", 1, 0, "ModelNoteList");
+
   Controller::Note* note_controller = new Controller::Note();
   Model::NoteCreator* note_creator = new Model::NoteCreator();
 

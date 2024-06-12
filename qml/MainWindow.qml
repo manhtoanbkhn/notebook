@@ -2,6 +2,7 @@ import QtQuick 2.15
 import QtQuick.Layouts
 import QtQuick.Controls
 import QtQuick.Dialogs
+import model.notelist 1.0
 
 Item {
     MessageDialog {
@@ -25,22 +26,32 @@ Item {
         delegate: Button {
             id: a_note
             width: list_view.width
-            text: note_list.headerData(index, Qt.Vertical)
+            text: note_list.headerData(index, Qt.Vertical, ModelNoteList.TitleRole)
 
             contentItem: Text {
                 id: note_header
                 text: a_note.text
+                anchors.fill: parent
                 font {
                     pixelSize: 40
                 }
-                // opacity: enabled ? 1 : 0.3
+                anchors.leftMargin: 5
                 color: "blue"
+                verticalAlignment: Text.AlignTop
             }
             background: Rectangle {
                 anchors.fill: parent
                 opacity: enabled ? 1.0 : 0.3
                 color: index % 2 ? "#f7f7e9" : "#f1fbf7"
                 radius: 2
+                Text {
+                    anchors.right: parent.right
+                    anchors.bottom: parent.bottom
+                    anchors.rightMargin: 5
+                    text: TimeRole
+                    color: "blue"
+                    opacity: 0.4
+                }
             }
             onClicked: note_controller.setEditingNote(index)
             onPressAndHold: {

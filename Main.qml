@@ -15,6 +15,7 @@ Window {
                let note = note_creator.create()
                note.content = loader.item.content
                note.title = loader.item.title
+               note.time = note_controller.getTimeNowStr()
                note_controller.finishEditingNote(note)
            }
            loader.source = "qml/MainWindow.qml"
